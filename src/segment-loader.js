@@ -992,7 +992,7 @@ export default class SegmentLoader extends videojs.EventTarget {
       this.sourceUpdater_.removeAudio(start, end, removeFinished);
     }
 
-    if (this.loaderType_ === 'main' && this.startingMedia_.hasVideo) {
+    if (this.loaderType_ === 'main' && this.startingMedia_ && this.startingMedia_.hasVideo) {
       this.gopBuffer_ = removeGopBuffer(this.gopBuffer_, start, end, this.timeMapping_);
       removesRemaining++;
       this.sourceUpdater_.removeVideo(start, end, removeFinished);
@@ -2316,8 +2316,8 @@ export default class SegmentLoader extends videojs.EventTarget {
     // Although transmuxing is done, appends may not yet be finished. Throw a marker
     // on each queue this loader is responsible for to ensure that the appends are
     // complete.
-    const waitForVideo = this.loaderType_ === 'main' && this.startingMedia_.hasVideo;
-    const waitForAudio = !this.audioDisabled_ && this.startingMedia_.hasAudio;
+    const waitForVideo = this.loaderType_ === 'main' && this.startingMedia_ && this.startingMedia_.hasVideo;
+    const waitForAudio = !this.audioDisabled_ && this.startingMedia_ && this.startingMedia_.hasAudio;
 
     segmentInfo.waitingOnAppends = 0;
 
@@ -2439,7 +2439,7 @@ export default class SegmentLoader extends videojs.EventTarget {
   updateTimingInfoEnd_(segmentInfo) {
     segmentInfo.timingInfo = segmentInfo.timingInfo || {};
     const useVideoTimingInfo =
-      this.loaderType_ === 'main' && this.startingMedia_.hasVideo;
+      this.loaderType_ === 'main' && this.startingMedia_ && this.startingMedia_.hasVideo;
     const prioritizedTimingInfo = useVideoTimingInfo && segmentInfo.videoTimingInfo ?
       segmentInfo.videoTimingInfo : segmentInfo.audioTimingInfo;
 
